@@ -145,6 +145,7 @@ function App() {
                         <div className="timer-pill-container">
                             <div 
                                 className="timer-pill-fill" 
+                                key={gameState}
                                 style={{ 
                                     width: `${(timeLeft / maxTime) * 100}%`,
                                     backgroundColor: timeLeft > maxTime * 0.5 ? '#58CC02' : timeLeft > maxTime * 0.2 ? '#FFC107' : '#FF5252'
