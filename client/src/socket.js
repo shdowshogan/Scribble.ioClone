@@ -1,7 +1,6 @@
 import io from 'socket.io-client';
 
 // Connect to backend
-// Automatically use the hostname (localhost or IP) to find the server
-const socket = io(`http://${window.location.hostname}:3000`);
+const socket = io('https://scribble-ioclone.onrender.com');
 
 export default socket;
