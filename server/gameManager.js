@@ -98,7 +98,7 @@ function getThreeRandomWords() {
     return shuffled.slice(0, 3);
 }
 
-function startGame(roomId, io) {
+function startGame(roomId, io, isNewGame = false) {
     if (rooms[roomId]) {
         // Activate Bot Mode if single player
         console.log(`Starting game for room ${roomId}. Players: ${rooms[roomId].players.length}`);
@@ -128,7 +128,26 @@ function startGame(roomId, io) {
             
             if (currentDrawerIndex !== -1) {
                 nextDrawerIndex = (currentDrawerIndex + 1) % rooms[roomId].players.length;
+                
+                // If we wrapped back to 0, and it's not the very start of game, New Round!
+                if (nextDrawerIndex === 0 && !isNewGame) {
+                    rooms[roomId].currentRound++;
+                }
             }
+            
+            // CHECK FOR GAME OVER
+            if (rooms[roomId].currentRound > rooms[roomId].maxRounds) {
+                // Game Over Logic
+                rooms[roomId].gameState = 'ENDED';
+                // Sort players by score
+                const sortedPlayers = [...rooms[roomId].players].sort((a,b) => b.score - a.score);
+                console.log(`Game Over for room ${roomId}`);
+                return {
+                    gameState: 'GAME_OVER',
+                    players: sortedPlayers
+                };
+            }
+
             drawer = rooms[roomId].players[nextDrawerIndex];
         }
 
@@ -137,6 +156,13 @@ function startGame(roomId, io) {
         if (rooms[roomId].botInterval) {
             clearInterval(rooms[roomId].botInterval);
             rooms[roomId].botInterval = null;
+        }
+
+        // Initialize Rounds
+        if (isNewGame) {
+            rooms[roomId].currentRound = 1;
+            rooms[roomId].maxRounds = 3;
+            rooms[roomId].drawer = null; // Reset drawer for fresh start
         }
 
         // Handle Bot Turn
@@ -257,11 +283,19 @@ function startRoundTimer(roomId, io) {
             
                 // Auto-start next round after delay
                 setTimeout(() => {
-                    const gameData = startGame(roomId);
+                    const gameData = startGame(roomId, io, false); // Not a new game
+                    
+                    if (gameData && gameData.gameState === 'GAME_OVER') {
+                        io.to(roomId).emit('game_over', gameData.players);
+                        return;
+                    }
+
                     if (gameData) {
                         io.to(roomId).emit('round_start', { 
                             drawer: gameData.drawer,
-                            drawerName: gameData.roundInfo.drawer
+                            drawerName: gameData.roundInfo.drawer,
+                            round: rooms[roomId].currentRound,       // Send Round Info
+                            maxRounds: rooms[roomId].maxRounds
                         });
                         io.to(gameData.drawer).emit('choose_word', gameData.options);
                         startRoundTimer(roomId, io); // Start 15s timer for next selection

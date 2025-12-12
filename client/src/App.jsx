@@ -8,6 +8,7 @@ import './App.css';
 
 import PlayerList from './components/PlayerList';
 import WordSelectionModal from './components/WordSelectionModal';
+import GameOverModal from './components/GameOverModal';
 
 function App() {
   const [isInGame, setIsInGame] = useState(false);
@@ -22,6 +23,7 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [maxTime, setMaxTime] = useState(60);
   const [notification, setNotification] = useState(null); // { message, type }
+  const [gameOverStats, setGameOverStats] = useState(null);
   
   // New States
   const [countdown, setCountdown] = useState(null); // 3, 2, 1, null
@@ -79,6 +81,10 @@ function App() {
         });
     });
 
+    socket.on('game_over', (players) => {
+        setGameOverStats(players);
+    });
+
     socket.on('choose_word', (options) => {
         setWordOptions(options);
     });
@@ -106,6 +112,7 @@ function App() {
        socket.off('your_word');
        socket.off('timer_update');
        socket.off('round_end');
+       socket.off('game_over');
     };
   }, []);
 
@@ -161,7 +168,10 @@ function App() {
                         </div>
 
                         {/* Right: Room Info */}
-                        <div className="room-info">Room: {roomData?.id}</div>
+                        <div className="room-info">
+                            Room: {roomData?.id}
+                            {roundInfo?.round && ` | Round ${roundInfo.round}/${roundInfo.maxRounds}`}
+                        </div>
                      </div>
                  </div>
                  
@@ -223,6 +233,14 @@ function App() {
                   <div className="countdown-number">{countdown}</div>
               </div>
           )}
+
+          {gameOverStats && (
+              <GameOverModal 
+                players={gameOverStats} 
+                onReturnToLobby={() => window.location.reload()} 
+              />
+          )}
+
           </>
       )}
     </div>

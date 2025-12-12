@@ -70,21 +70,30 @@ io.on('connection', (socket) => {
     socket.emit('room_joined', room);
   });
   
-  socket.on('start_game', ({ roomId }) => {
-      // Broadcast countdown signal
-      io.to(roomId).emit('game_starting');
-      
-      // Start actual game after 3 seconds (sync with client countdown)
-      setTimeout(() => {
-          const gameData = startGame(roomId, io);
-          if (gameData) {
-             io.to(roomId).emit('round_start', { 
-                 drawer: gameData.drawer,
-                 drawerName: gameData.roundInfo.drawer
-             });
-             io.to(gameData.drawer).emit('choose_word', gameData.options);
-          }
-      }, 3500); // 3.5s to be safe
+  socket.on('start_game', (data) => {
+    // Only host can start? 
+    // Logic inside startGame handles generic start
+    const gameData = startGame(data.roomId, io, true); // true = New Game
+    
+    if (gameData) {
+       io.to(data.roomId).emit('game_starting'); // Countdown logic on client
+       
+       // Note: The Countdown on client takes 3s.
+       // after 3s client sets state to PLAYING/SELECTING.
+       // But server returns gameData IMMEDIATELY (Selecting Word state).
+       // We should match timing.
+       
+       setTimeout(() => {
+           io.to(data.roomId).emit('round_start', { 
+               drawer: gameData.drawer,
+               drawerName: gameData.roundInfo.drawer,
+               round: 1,
+               maxRounds: 3
+           });
+           io.to(gameData.drawer).emit('choose_word', gameData.options);
+           startRoundTimer(data.roomId, io);
+       }, 3000);
+    }
   });
 
   socket.on('select_word', ({ roomId, word }) => {
