@@ -132,8 +132,10 @@ function Canvas({ roomId, isDrawer, initialHistory }) {
       const touch = e.touches[0];
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
-      const offsetX = touch.clientX - rect.left;
-      const offsetY = touch.clientY - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const offsetX = (touch.clientX - rect.left) * scaleX;
+      const offsetY = (touch.clientY - rect.top) * scaleY;
       
       setIsDrawing(true);
       canvasRef.current.lastX = offsetX;
@@ -146,8 +148,10 @@ function Canvas({ roomId, isDrawer, initialHistory }) {
       const touch = e.touches[0];
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
-      const offsetX = touch.clientX - rect.left;
-      const offsetY = touch.clientY - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const offsetX = (touch.clientX - rect.left) * scaleX;
+      const offsetY = (touch.clientY - rect.top) * scaleY;
       
       const ctx = canvas.getContext('2d');
       const lastX = canvasRef.current.lastX;
