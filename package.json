@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "ship": "node ship.js",
     "predeploy": "cd client && npm install && npm run build",
     "deploy": "gh-pages -d client/dist"
   },
