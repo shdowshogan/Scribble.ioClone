@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'; // Using App.css for styles
+import '../App.css'; // Using App.css for styles
 
 const GameOverModal = ({ players, onReturnToLobby }) => {
     // players is an array sorted by score desc

@@ -223,16 +223,32 @@ button {
     overflow: hidden; /* clip bar */
 }
 
-.timer-pill-container {
+.header-left {
     grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.timer-pill-container {
+    /* grid-column: 1; removed */
     justify-self: start;
     width: 80px;
-    height: 14px;
+    height: 10px; /* slightly thinner */
     background: #eee;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #ddd;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.round-badge {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #3b5998; /* Nice blue */
+    text-transform: uppercase;
+    margin-left: 2px;
 }
 
 .timer-pill-fill {
