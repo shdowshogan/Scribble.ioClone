@@ -150,6 +150,9 @@ function App() {
                      <div className="header-content">
                         {/* Left: Timer + Round Info */}
                         <div className="header-left">
+                            <div className="round-badge">
+                                ROUND {roundInfo?.round || 1}
+                            </div>
                             <div className="timer-pill-container">
                                 <div 
                                     className="timer-pill-fill" 
@@ -159,9 +162,6 @@ function App() {
                                         backgroundColor: timeLeft > maxTime * 0.5 ? '#58CC02' : timeLeft > maxTime * 0.2 ? '#FFC107' : '#FF5252'
                                     }}
                                 />
-                            </div>
-                            <div className="round-badge">
-                                ROUND {roundInfo?.round || 1}
                             </div>
                         </div>
 
