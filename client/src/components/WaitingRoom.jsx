@@ -68,32 +68,36 @@ function WaitingRoom({ roomId, players, isHost, onStartGame }) {
                         onChange={(e) => handleSettingChange('maxRounds', e.target.value)}
                         disabled={!isHost}
                     >
+                        <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
+                        <option value="4">4</option>
                         <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
                 </div>
 
                 {/* Draw Time */}
                 <div className="setting-item">
-                    <label>Draw Time</label>
-                    <select 
+                    <label>Draw & Guess Time (s)</label>
+                    <input 
+                        type="number"
+                        min="10"
+                        max="300"
                         value={settings.drawTime} 
                         onChange={(e) => handleSettingChange('drawTime', e.target.value)}
                         disabled={!isHost}
-                    >
-                        <option value="30">30s</option>
-                        <option value="60">60s</option>
-                        <option value="80">80s</option>
-                        <option value="100">100s</option>
-                        <option value="120">120s</option>
-                    </select>
+                        className="setting-input"
+                    />
                 </div>
 
                 {/* Max Players */}
                 <div className="setting-item">
-                    <label>Players</label>
+                    <label>Max Players</label>
                     <select 
                         value={settings.maxPlayers} 
                         onChange={(e) => handleSettingChange('maxPlayers', e.target.value)}
