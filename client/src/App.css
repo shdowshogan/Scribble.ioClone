@@ -626,6 +626,60 @@ button {
     transform: translateY(-2px);
 }
 
+/* Waiting Room Settings */
+.settings-section {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 8px;
+}
+
+.settings-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.setting-item label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.setting-item select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    background: white;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.setting-item select:disabled {
+    background: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #eee;
+}
+
+.host-control-msg {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 10px;
+    font-style: italic;
+}
+
 .notification-overlay {
     position: absolute;
     top: 0;

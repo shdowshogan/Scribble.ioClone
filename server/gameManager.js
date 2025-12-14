@@ -11,11 +11,21 @@ function joinRoom(socket, roomId, username, avatar) {
       gameState: 'WAITING', // WAITING, PLAYING, ENDED
       drawingHistory: [], // Store drawing actions
       chatHistory: [],     // Store chat messages
-      botInterval: null   // Store bot drawing interval ID
+      botInterval: null,   // Store bot drawing interval ID
+      settings: {
+          maxRounds: 3,
+          maxPlayers: 8,
+          drawTime: 60,
+          wordSelectTime: 15
+      }
     };
   }
 
   const room = rooms[roomId];
+
+  if (room.players.length >= room.settings.maxPlayers) {
+      return { error: 'Room is full!' };
+  }
   const player = {
     id: socket.id,
     username,
@@ -59,8 +69,19 @@ module.exports = {
   storeDrawing,
   clearDrawingHistory,
   storeMessage,
-  getRoom
+  storeMessage,
+  getRoom,
+  updateRoomSettings
 };
+
+function updateRoomSettings(roomId, settings) {
+    if (rooms[roomId]) {
+        // Validate / Merge settings
+        rooms[roomId].settings = { ...rooms[roomId].settings, ...settings };
+        return rooms[roomId].settings;
+    }
+    return null;
+}
 
 function getRoom(roomId) {
     return rooms[roomId];
@@ -102,7 +123,7 @@ function startGame(roomId, io, isNewGame = false) {
     if (rooms[roomId]) {
         if (isNewGame) {
             rooms[roomId].currentRound = 1;
-            rooms[roomId].maxRounds = 3;
+            rooms[roomId].maxRounds = rooms[roomId].settings.maxRounds;
             rooms[roomId].drawer = null; // Reset drawer for fresh start
         }
         // Activate Bot Mode if single player
@@ -176,8 +197,9 @@ function startGame(roomId, io, isNewGame = false) {
              const drawingActions = BOT_DRAWINGS[word];
              
              rooms[roomId].currentWord = word;
+             rooms[roomId].currentWord = word;
              rooms[roomId].gameState = 'PLAYING';
-             rooms[roomId].timeLeft = 60;
+             rooms[roomId].timeLeft = rooms[roomId].settings.drawTime;
              
              console.log(`Bot Drawing: ${word}`);
              
@@ -219,11 +241,11 @@ function startGame(roomId, io, isNewGame = false) {
         const options = getThreeRandomWords();
         rooms[roomId].wordOptions = options;
         rooms[roomId].currentWord = null; 
-        rooms[roomId].timeLeft = 15; 
+        rooms[roomId].timeLeft = rooms[roomId].settings.wordSelectTime; 
         
         console.log(`Room ${roomId}: Drawer is ${drawer.username}`);
         
-        startRoundTimer(roomId, io); // Start 15s timer for word selection
+        startRoundTimer(roomId, io); // Start timer for word selection
 
         return { 
             gameState: 'SELECTING_WORD',
@@ -313,8 +335,8 @@ function selectWord(roomId, word, io) {
         rooms[roomId].currentWord = word;
         rooms[roomId].gameState = 'PLAYING';
         
-        // Start Timer for Drawing (60s)
-        rooms[roomId].timeLeft = 60;
+        // Start Timer for Drawing
+        rooms[roomId].timeLeft = rooms[roomId].settings.drawTime;
         startRoundTimer(roomId, io);
         
         return {

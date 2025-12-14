@@ -24,14 +24,22 @@ const {
     storeDrawing,
     clearDrawingHistory,
     storeMessage,
-    getRoom
+    getRoom,
+    updateRoomSettings
 } = require('./gameManager');
 
 io.on('connection', (socket) => {
   console.log('a user connected:', socket.id);
 
   socket.on('join_room', ({ username, roomId, avatar }) => {
-    const { room, player } = joinRoom(socket, roomId, username, avatar);
+    const result = joinRoom(socket, roomId, username, avatar);
+    
+    if (result.error) {
+        socket.emit('error', { message: result.error });
+        return;
+    }
+
+    const { room, player } = result;
     console.log(`${username} joined room ${roomId}`);
     
     // Notify others in the room
@@ -70,6 +78,14 @@ io.on('connection', (socket) => {
     socket.emit('room_joined', room);
   });
   
+  // Game Settings Update (Admin Only)
+  socket.on('update_settings', ({ roomId, settings }) => {
+      const updatedSettings = updateRoomSettings(roomId, settings);
+      if (updatedSettings) {
+          io.to(roomId).emit('settings_update', updatedSettings);
+      }
+  });
+
   socket.on('start_game', (data) => {
     // Only host can start? 
     // Logic inside startGame handles generic start

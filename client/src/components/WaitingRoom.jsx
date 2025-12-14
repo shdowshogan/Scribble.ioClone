@@ -1,7 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import socket from '../socket';
+import '../App.css'; // Ensure CSS is available
 
 function WaitingRoom({ roomId, players, isHost, onStartGame }) {
   const [copyText, setCopyText] = useState('Copy');
+  
+  // Game Settings State
+  const [settings, setSettings] = useState({
+      maxRounds: 3,
+      drawTime: 60,
+      maxPlayers: 8
+  });
+
+  useEffect(() => {
+      // Sync settings from server
+      socket.on('settings_update', (newSettings) => {
+          setSettings(newSettings);
+      });
+      
+      // Initial Sync if room data already passed? 
+      // If we joined, we likely got room info in App.jsx. 
+      // We could pass settings as prop, but socket sync is fine for dynamic updates.
+
+      return () => {
+          socket.off('settings_update');
+      };
+  }, []);
+
+  const handleSettingChange = (key, value) => {
+      if (!isHost) return;
+      const newSettings = { ...settings, [key]: parseInt(value) };
+      setSettings(newSettings);
+      socket.emit('update_settings', { roomId, settings: newSettings });
+  };
 
   const copyRoomId = () => {
     navigator.clipboard.writeText(roomId);
@@ -24,13 +55,69 @@ function WaitingRoom({ roomId, players, isHost, onStartGame }) {
           </div>
         </div>
 
+        {/* Game Settings Section */}
+        <div className="settings-section">
+            <h3>Game Settings</h3>
+            <div className="settings-grid">
+                
+                {/* Rounds */}
+                <div className="setting-item">
+                    <label>Rounds</label>
+                    <select 
+                        value={settings.maxRounds} 
+                        onChange={(e) => handleSettingChange('maxRounds', e.target.value)}
+                        disabled={!isHost}
+                    >
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
+                {/* Draw Time */}
+                <div className="setting-item">
+                    <label>Draw Time</label>
+                    <select 
+                        value={settings.drawTime} 
+                        onChange={(e) => handleSettingChange('drawTime', e.target.value)}
+                        disabled={!isHost}
+                    >
+                        <option value="30">30s</option>
+                        <option value="60">60s</option>
+                        <option value="80">80s</option>
+                        <option value="100">100s</option>
+                        <option value="120">120s</option>
+                    </select>
+                </div>
+
+                {/* Max Players */}
+                <div className="setting-item">
+                    <label>Players</label>
+                    <select 
+                        value={settings.maxPlayers} 
+                        onChange={(e) => handleSettingChange('maxPlayers', e.target.value)}
+                        disabled={!isHost}
+                    >
+                         <option value="2">2</option>
+                         <option value="4">4</option>
+                         <option value="6">6</option>
+                         <option value="8">8</option>
+                         <option value="12">12</option>
+                    </select>
+                </div>
+
+            </div>
+            {!isHost && <div className="host-control-msg">Only the host can change settings</div>}
+        </div>
+
         <div className="players-section">
-            <h3>Players Joined ({players.length})</h3>
+            <h3>Players Joined ({players.length}/{settings.maxPlayers})</h3>
             <div className="players-list">
                 {players.map(player => (
                     <div key={player.id} className="player-item">
                         <img src={player.avatar} alt={player.username} className="player-avatar-small"/>
-                        <span>{player.username} {player.id === socket.id ? '(You)' : ''}</span>
+                        <span>{player.username} {player.id === socket.id ? '(You)' : ''} {player === players[0] ? '👑' : ''}</span>
                     </div>
                 ))}
             </div>
@@ -53,9 +140,5 @@ function WaitingRoom({ roomId, players, isHost, onStartGame }) {
     </div>
   );
 }
-
-// Need socket for checking ID? Actually we can pass that logic in parent or use ID from prop if available. 
-// For now, let's fix the socket reference.
-import socket from '../socket';
 
 export default WaitingRoom;
