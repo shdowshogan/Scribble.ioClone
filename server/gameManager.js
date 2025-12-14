@@ -100,6 +100,11 @@ function getThreeRandomWords() {
 
 function startGame(roomId, io, isNewGame = false) {
     if (rooms[roomId]) {
+        if (isNewGame) {
+            rooms[roomId].currentRound = 1;
+            rooms[roomId].maxRounds = 3;
+            rooms[roomId].drawer = null; // Reset drawer for fresh start
+        }
         // Activate Bot Mode if single player
         console.log(`Starting game for room ${roomId}. Players: ${rooms[roomId].players.length}`);
         if (rooms[roomId].players.length === 1 && !rooms[roomId].isBotActive) {
@@ -159,11 +164,7 @@ function startGame(roomId, io, isNewGame = false) {
         }
 
         // Initialize Rounds
-        if (isNewGame) {
-            rooms[roomId].currentRound = 1;
-            rooms[roomId].maxRounds = 3;
-            rooms[roomId].drawer = null; // Reset drawer for fresh start
-        }
+
 
         // Handle Bot Turn
         if (drawer.isBot) {
@@ -307,6 +308,7 @@ function startRoundTimer(roomId, io) {
 }
 
 function selectWord(roomId, word, io) {
+    console.log(`Selecting word: "${word}" for room ${roomId}`);
     if (rooms[roomId] && rooms[roomId].wordOptions.includes(word)) {
         rooms[roomId].currentWord = word;
         rooms[roomId].gameState = 'PLAYING';
@@ -320,6 +322,7 @@ function selectWord(roomId, word, io) {
             dashes: word.replace(/[a-zA-Z]/g, "_ ")
         };
     }
+    console.log(`Selection failed. Options: ${rooms[roomId]?.wordOptions}`);
     return null;
 }
 
@@ -327,10 +330,16 @@ function selectWord(roomId, word, io) {
 
 function handleGuess(roomId, playerSocketId, guess) {
     const room = rooms[roomId];
-    if (!room || room.gameState !== 'PLAYING' || !room.currentWord) return { isCorrect: false };
+    if (!room) return { isCorrect: false };
+    
+    console.log(`HandleGuess: State=${room.gameState}, Word=${room.currentWord}`);
+
+    if (room.gameState !== 'PLAYING' || !room.currentWord) return { isCorrect: false };
 
     const cleanGuess = guess.toLowerCase().trim();
     const cleanWord = room.currentWord.toLowerCase().trim();
+    
+    console.log(`Checking: "${cleanGuess}" vs "${cleanWord}"`);
 
     if (cleanGuess === cleanWord) {
         const player = room.players.find(p => p.id === playerSocketId);
@@ -357,7 +366,7 @@ function handleGuess(roomId, playerSocketId, guess) {
     
     // Check for "Close" guess
     const distance = levenshtein(cleanGuess, cleanWord);
-    console.log(`Guess: ${cleanGuess}, Target: ${cleanWord}, Dist: ${distance}`);
+    // console.log(`Dist: ${distance}`);
     
     if (distance > 0 && distance <= 2 && cleanWord.length >= 3) {
         return { isCorrect: false, isClose: true };
