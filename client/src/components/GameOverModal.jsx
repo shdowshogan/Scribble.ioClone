@@ -4,7 +4,7 @@ import '../App.css'; // Using App.css for styles
 const GameOverModal = ({ players, onReturnToLobby }) => {
     // players is an array sorted by score desc
     return (
-        <div className="modal-overlay">
+        <div className="global-overlay">
             <div className="game-over-modal funky-animate">
                 <h1 className="funky-title">GAME OVER!</h1>
                 

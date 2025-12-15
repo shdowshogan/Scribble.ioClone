@@ -7,7 +7,7 @@ function WordSelectionModal({ options, roomId }) {
   };
 
   return (
-    <div className="modal-overlay">
+    <div className="canvas-overlay">
         <div className="modal-content">
             <h2>Choose a Word!</h2>
             <div className="word-options">
