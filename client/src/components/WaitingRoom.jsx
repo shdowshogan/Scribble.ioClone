@@ -84,16 +84,21 @@ function WaitingRoom({ roomId, players, isHost, onStartGame }) {
                 {/* Draw Time */}
                 <div className="setting-item">
                     <label>Draw & Guess Time (s)</label>
-                    <input 
-                        type="number"
-                        min="10"
-                        max="300"
+                    <select 
                         value={settings.drawTime} 
                         onChange={(e) => handleSettingChange('drawTime', e.target.value)}
                         disabled={!isHost}
-                        className="setting-input"
-                    />
-                </div>
+                    >
+                        <option value="30">30</option>
+                        <option value="45">45</option>
+                        <option value="60">60</option>
+                        <option value="80">80</option>
+                        <option value="100">100</option>
+                        <option value="120">120</option>
+                        <option value="150">150</option>
+                        <option value="180">180</option>
+                    </select>
+                </div> 
 
                 {/* Max Players */}
                 <div className="setting-item">
