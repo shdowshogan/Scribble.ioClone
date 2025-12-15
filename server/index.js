@@ -179,9 +179,16 @@ io.on('connection', (socket) => {
         setTimeout(() => {
             const gameData = startGame(roomId, io);
             if (gameData) {
+                if (gameData.gameState === 'GAME_OVER') {
+                    io.to(roomId).emit('game_over', gameData.players);
+                    return;
+                }
+
                 io.to(roomId).emit('round_start', { 
                     drawer: gameData.drawer,
-                    drawerName: gameData.roundInfo.drawer
+                    drawerName: gameData.roundInfo.drawer,
+                    round: gameData.roundInfo.round,
+                    maxRounds: gameData.roundInfo.maxRounds
                 });
                 
                 // Also update scores again if round start logic changed anything (e.g. rotation)

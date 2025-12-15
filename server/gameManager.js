@@ -206,7 +206,9 @@ function startGame(roomId, io, isNewGame = false) {
              // 1. Notify Round Start
              io.to(roomId).emit('round_start', { 
                  drawer: drawer.id, 
-                 drawerName: drawer.username 
+                 drawerName: drawer.username,
+                 round: rooms[roomId].currentRound,
+                 maxRounds: rooms[roomId].maxRounds
              });
              
              // 2. Notify Word Selected (Dashes)
@@ -252,7 +254,9 @@ function startGame(roomId, io, isNewGame = false) {
             drawer: drawer.id,
             options: options,  
             roundInfo: {
-                drawer: drawer.username
+                drawer: drawer.username,
+                round: rooms[roomId].currentRound,
+                maxRounds: rooms[roomId].maxRounds
             }
         };
     }

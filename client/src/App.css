@@ -1145,3 +1145,148 @@ button {
     50% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(1); opacity: 1; } /* Just pop in */
 }
+
+/* Game Over Modal Styles */
+.game-over-modal {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.funky-title {
+    font-size: 3rem;
+    color: #5D3FD3;
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: 2px 2px 0 #FFD700;
+}
+
+.podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    height: 250px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.podium-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 30%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+/* 1st Place (Center) */
+.step-1 {
+    height: 100%; /* Highest */
+    background: linear-gradient(to bottom, #FFD700, #FDB931);
+    order: 2; /* Visual Order: Center */
+    z-index: 2;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+/* 2nd Place (Left) */
+.step-2 {
+    height: 75%;
+    background: linear-gradient(to bottom, #C0C0C0, #E0E0E0);
+    order: 1; /* Visual Order: Left */
+}
+
+/* 3rd Place (Right) */
+.step-3 {
+    height: 55%;
+    background: linear-gradient(to bottom, #CD7F32, #D2691E);
+    order: 3; /* Visual Order: Right */
+}
+
+.winner-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid white;
+    margin-bottom: 10px;
+    background: white;
+    position: absolute;
+    top: -30px; /* Float above the bar */
+}
+
+.step-1 .winner-avatar {
+    width: 80px;
+    height: 80px;
+    top: -40px;
+    border-color: #FFD700;
+}
+
+.rank {
+    font-size: 2rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.8);
+    position: absolute;
+    bottom: 5px;
+}
+
+.winner-name {
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-top: 40px; /* Space for avatar */
+    font-size: 1.1rem;
+}
+
+.winner-score {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.9);
+}
+
+.leaderboard-list {
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+.funky-btn {
+    background: #5D3FD3;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.funky-btn:hover {
+    transform: scale(1.05);
+    background: #4a32a8;
+}
