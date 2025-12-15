@@ -25,7 +25,8 @@ const {
     clearDrawingHistory,
     storeMessage,
     getRoom,
-    updateRoomSettings
+    updateRoomSettings,
+    resetGame
 } = require('./gameManager');
 
 io.on('connection', (socket) => {
@@ -217,6 +218,15 @@ io.on('connection', (socket) => {
         }
     }
   });
+
+    socket.on('play_again', ({ roomId }) => {
+        const room = resetGame(roomId);
+        if (room) {
+            io.to(roomId).emit('game_reset', room);
+            // Re-broadcast updated player list (scores 0)
+            io.to(roomId).emit('update_player_list', room.players);
+        }
+    });
 
   socket.on('disconnect', () => {
     const result = leaveRoom(socket);

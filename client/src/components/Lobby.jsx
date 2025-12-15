@@ -41,7 +41,7 @@ function Lobby({ onJoin }) {
 
   return (
     <div className="lobby-container">
-      <h1 className="game-title">Scribbl.io Clone</h1>
+      <h1 className="game-title">Drawble.io</h1>
       
       <div className="lobby-card">
           {/* Avatar Selection Area */}

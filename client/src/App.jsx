@@ -101,6 +101,15 @@ function App() {
         setCurrentWord(word);
     });
 
+    socket.on('game_reset', (room) => {
+        setGameOverStats(null);
+        setGameState('WAITING');
+        setRoundInfo(null);
+        setDrawingHistory([]);
+        setRoomData(room);
+        setNotification(null);
+    });
+
     return () => {
        // Cleanup listeners
        socket.off('room_joined');
@@ -112,6 +121,7 @@ function App() {
        socket.off('your_word');
        socket.off('timer_update');
        socket.off('round_end');
+       socket.off('game_reset');
        socket.off('game_over');
     };
   }, []);
@@ -119,6 +129,12 @@ function App() {
   const handleStartGame = () => {
       if (roomData?.id) {
           socket.emit('start_game', { roomId: roomData.id });
+      }
+  };
+
+  const handlePlayAgain = () => {
+      if (roomData?.id) {
+          socket.emit('play_again', { roomId: roomData.id });
       }
   };
 
@@ -241,7 +257,8 @@ function App() {
           {gameOverStats && (
               <GameOverModal 
                 players={gameOverStats} 
-                onReturnToLobby={() => window.location.reload()} 
+                isHost={isHost}
+                onPlayAgain={handlePlayAgain}
               />
           )}
 

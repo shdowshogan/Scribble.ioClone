@@ -59,6 +59,26 @@ function storeMessage(roomId, messageData) {
     }
 }
 
+function resetGame(roomId) {
+    const room = rooms[roomId];
+    if (!room) return null;
+
+    room.currentRound = 0;
+    room.drawingHistory = [];
+    room.gameState = 'WAITING';
+    room.drawer = null;
+    room.currentWord = null;
+    
+    // Reset player scores
+    room.players.forEach(p => {
+        p.score = 0;
+        p.isGuessed = false; // Assuming isGuessed might be a player property
+    });
+
+    console.log(`Room ${roomId} has been reset for a new game.`);
+    return room;
+}
+
 module.exports = {
   joinRoom,
   leaveRoom,
@@ -69,9 +89,9 @@ module.exports = {
   storeDrawing,
   clearDrawingHistory,
   storeMessage,
-  storeMessage,
   getRoom,
-  updateRoomSettings
+  updateRoomSettings,
+  resetGame
 };
 
 function updateRoomSettings(roomId, settings) {

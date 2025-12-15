@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css'; // Using App.css for styles
 
-const GameOverModal = ({ players, onReturnToLobby }) => {
+const GameOverModal = ({ players, isHost, onPlayAgain }) => {
     // players is an array sorted by score desc
     return (
         <div className="global-overlay">
@@ -29,9 +29,13 @@ const GameOverModal = ({ players, onReturnToLobby }) => {
                     ))}
                 </div>
 
-                <button className="funky-btn" onClick={() => window.location.reload()}>
-                    Play Again
-                </button>
+                {isHost ? (
+                    <button className="funky-btn" onClick={onPlayAgain}>
+                        Play Again
+                    </button>
+                ) : (
+                    <div className="waiting-msg">Waiting for host to play again...</div>
+                )}
             </div>
         </div>
     );
