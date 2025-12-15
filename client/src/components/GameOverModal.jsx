@@ -29,13 +29,9 @@ const GameOverModal = ({ players, isHost, onPlayAgain }) => {
                     ))}
                 </div>
 
-                {isHost ? (
-                    <button className="funky-btn" onClick={onPlayAgain}>
-                        Play Again
-                    </button>
-                ) : (
-                    <div className="waiting-msg">Waiting for host to play again...</div>
-                )}
+                <button className="funky-btn" onClick={onPlayAgain}>
+                    Play Again
+                </button>
             </div>
         </div>
     );

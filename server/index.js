@@ -220,11 +220,16 @@ io.on('connection', (socket) => {
   });
 
     socket.on('play_again', ({ roomId }) => {
+        console.log('Received play_again for room:', roomId);
         const room = resetGame(roomId);
         if (room) {
+            console.log('Game reset successful for room:', roomId, 'emitting game_reset');
             io.to(roomId).emit('game_reset', room);
-            // Re-broadcast updated player list (scores 0)
             io.to(roomId).emit('update_player_list', room.players);
+        } else {
+            console.error('resetGame failed - Room not found:', roomId);
+            // Notify the user that the room is gone
+            socket.emit('room_expired');
         }
     });
 

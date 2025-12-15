@@ -110,6 +110,11 @@ function App() {
         setNotification(null);
     });
 
+    socket.on('room_expired', () => {
+        alert("Session expired (Server Restarted). Returning to lobby.");
+        window.location.reload();
+    });
+
     return () => {
        // Cleanup listeners
        socket.off('room_joined');

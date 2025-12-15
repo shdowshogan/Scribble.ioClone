@@ -167,6 +167,11 @@ function startGame(roomId, io, isNewGame = false) {
         if (rooms[roomId].isBotActive) {
             // In Bot Mode, the Bot ALWAYS draws
             drawer = rooms[roomId].players.find(p => p.isBot);
+            
+            // In Bot Mode, every turn is a "round" since only bot draws
+            if (!isNewGame) {
+                rooms[roomId].currentRound++;
+            }
         } else {
             // Normal Rotation
             let nextDrawerIndex = 0;
@@ -180,21 +185,23 @@ function startGame(roomId, io, isNewGame = false) {
                     rooms[roomId].currentRound++;
                 }
             }
-            
-            // CHECK FOR GAME OVER
-            if (rooms[roomId].currentRound > rooms[roomId].maxRounds) {
-                // Game Over Logic
-                rooms[roomId].gameState = 'ENDED';
-                // Sort players by score
-                const sortedPlayers = [...rooms[roomId].players].sort((a,b) => b.score - a.score);
-                console.log(`Game Over for room ${roomId}`);
-                return {
-                    gameState: 'GAME_OVER',
-                    players: sortedPlayers
-                };
-            }
-
             drawer = rooms[roomId].players[nextDrawerIndex];
+        }
+
+        // CHECK FOR GAME OVER (Common for both modes)
+        // Use settings.maxRounds as primary source of truth if key missing
+        const limit = rooms[roomId].maxRounds || rooms[roomId].settings.maxRounds;
+        
+        if (rooms[roomId].currentRound > limit) {
+            // Game Over Logic
+            rooms[roomId].gameState = 'ENDED';
+            // Sort players by score
+            const sortedPlayers = [...rooms[roomId].players].sort((a,b) => b.score - a.score);
+            console.log(`Game Over for room ${roomId}`);
+            return {
+                gameState: 'GAME_OVER',
+                players: sortedPlayers
+            };
         }
 
         rooms[roomId].drawer = drawer.id;
