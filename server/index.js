@@ -179,18 +179,25 @@ io.on('connection', (socket) => {
         // Stop timer & Restart
         setTimeout(() => {
             const gameData = startGame(roomId, io);
+            console.log('startGame returned:', JSON.stringify(gameData, null, 2));
+
             if (gameData) {
                 if (gameData.gameState === 'GAME_OVER') {
+                    console.log('Emitting GAME_OVER event');
                     io.to(roomId).emit('game_over', gameData.players);
                     return;
                 }
 
-                io.to(roomId).emit('round_start', { 
-                    drawer: gameData.drawer,
-                    drawerName: gameData.roundInfo.drawer,
-                    round: gameData.roundInfo.round,
-                    maxRounds: gameData.roundInfo.maxRounds
-                });
+                if (gameData.roundInfo) {
+                    io.to(roomId).emit('round_start', { 
+                        drawer: gameData.drawer,
+                        drawerName: gameData.roundInfo.drawer,
+                        round: gameData.roundInfo.round,
+                        maxRounds: gameData.roundInfo.maxRounds
+                    });
+                } else {
+                    console.error('CRITICAL: gameData exists but missing roundInfo!', gameData);
+                }
                 
                 // Also update scores again if round start logic changed anything (e.g. rotation)
                  const updatedRoom = getRoom(roomId);
