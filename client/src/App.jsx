@@ -4,6 +4,7 @@ import Lobby from './components/Lobby';
 import Canvas from './components/Canvas';
 import Chat from './components/Chat';
 import WaitingRoom from './components/WaitingRoom';
+import InteractiveBackground from './components/InteractiveBackground';
 import './App.css';
 
 import PlayerList from './components/PlayerList';
@@ -153,6 +154,7 @@ function App() {
 
   return (
     <div className="app">
+      <InteractiveBackground />
       {!isInGame ? (
         <Lobby onJoin={(u) => setUsername(u)}/>
       ) : (

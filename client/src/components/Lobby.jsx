@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import socket from '../socket';
 
+
+
 function Lobby({ onJoin }) {
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
@@ -41,6 +43,7 @@ function Lobby({ onJoin }) {
 
   return (
     <div className="lobby-container">
+
       <h1 className="game-title">Drawble.io</h1>
       
       <div className="lobby-card">

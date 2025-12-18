@@ -1,14 +1,14 @@
-
 .app {
   text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #543ABC;
+  /* background-color: #543ABC; */ /* Removed to show InteractiveBackground */
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
 }
+
 
 .lobby-container {
   display: flex;
@@ -17,6 +17,28 @@
   align-items: center;
   gap: 20px;
   width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Animated Doodle Background */
+.doodle-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('./assets/doodle_bg.png');
+    background-size: 400px; /* Seamless tile size */
+    opacity: 0.1; /* Subtle overlay */
+    animation: scrollDoodles 40s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scrollDoodles {
+    from { background-position: 0 0; }
+    to { background-position: 400px 400px; }
 }
 
 .game-title {
